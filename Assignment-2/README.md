@@ -17,8 +17,15 @@
     Segment Numbers [11,15] map to Stack segment
     (both inclusive)
 
+    Segment : 4 MSBs of vAddress (16)
+    offset:  12 LSBs of vAddress (2^12 = 4 x 1024 = 4KB )
+
 # q3.c
     Assumptions:
+    pageSize = 4KB
+    memorySize = 64KB
+    pageTable entries = 16
+    tlbSize = 4
     mapping() vpn->pfn : as vpn is the 4 MSB , toggle bit at second plcace, left shift by 2(x2^2),
                          add 13 and modulo by 64.
 
