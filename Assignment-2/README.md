@@ -9,16 +9,15 @@
 
 # q2.c
     Assumtions:
-    The segment numbers (12-15) in the Virtual Address given are used to map to Code, Heap and Stack
-    as no specific mapping of segment numbers was mentioned in the question. There's no universal rule 
-    that segment numbers dircetly map to code,heap or stack but it was a mere assumption.
-    Segment Numbers [0,5] map to Code segment
-    Segment Numbers [6,10] map to Heap segment
-    Segment Numbers [11,15] map to Stack segment
+    The segment numbers (14-15) in the Virtual Address given are used to map to Code, Heap and Stack
+    as given in the textbook pseudocode Chapter 16 of OSTEP.
+    Segment Numbers 00 map to Code segment
+    Segment Numbers 01 map to Heap segment
+    Segment Numbers 10 map to Stack segment
     (both inclusive)
 
-    Segment : 4 MSBs of vAddress (16)
-    offset:  12 LSBs of vAddress (2^12 = 4 x 1024 = 4KB )
+    Segment : 2 MSBs of vAddress (4)
+    offset:  14 LSBs of vAddress (2^14 = 16 x 1024 = 16KB )
 
 # q3.c
     Assumptions:
