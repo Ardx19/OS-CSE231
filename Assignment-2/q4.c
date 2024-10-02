@@ -86,8 +86,8 @@ int main() {
         pd.pt[i] = NULL;
     }
 
-    store(0xCCC0FFEE, 42);
-    printf("Value at 0xCCC0FFEE: %u\n", load(0xCCC0FFEE));
+    store(0x12345678, 85);
+    printf("Value at 0x12345678: %u\n", load(0x12345678));
 
     printf("Summary:\n");
     printf("Total page hits: %u\n", tohits);
