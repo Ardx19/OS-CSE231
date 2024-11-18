@@ -9,7 +9,12 @@ sem_t channels[THREAD_NUM];
 
 void* network(void* args){
     int i= *(int*)args;
-    printf("Server %d is waiting...\n",i+1);
+    int semVal1,semVal2;
+    sem_getvalue(&channels[i%THREAD_NUM],&semVal1);
+    sem_getvalue(&channels[(i+1)%THREAD_NUM],&semVal2);
+    if(semVal1==0 || semVal2==0){
+        printf("Server %d is waiting...\n",i+1);
+    }
     sem_wait(&channels[i%THREAD_NUM]);
     sem_wait(&channels[(i+1)%THREAD_NUM]);
     printf("Server %d is processing\n",i+1);

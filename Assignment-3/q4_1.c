@@ -2,23 +2,26 @@
 #include<pthread.h>
 #include<stdlib.h>
 #include<unistd.h>
+#include<time.h>
+
+clock_t start,end;
 
 int i,j,k,n,m,p;
 int **A,**B,**C;
 
-pthread_mutex_t mutex;
+pthread_mutex_t mutex1;
 
-void* multiplier(void* args) {
+void* multiplier1(void* args) {
     int tempK = *(int*)args;
-    pthread_mutex_lock(&mutex);
+    pthread_mutex_lock(&mutex1);
     C[i][j] += A[i][tempK] * B[tempK][j];
-    pthread_mutex_unlock(&mutex);
+    pthread_mutex_unlock(&mutex1);
     free(args);
     return NULL;
 }
 
-void matrixProd() {
-    pthread_mutex_init(&mutex, NULL);
+void matrixProd1() {
+    pthread_mutex_init(&mutex1, NULL);
     for (i = 0; i < m; i++) {
         for (j = 0; j < p; j++) {
             C[i][j] = 0;
@@ -30,7 +33,7 @@ void matrixProd() {
                     return;
                 }
                 *tempK = k;
-                if (pthread_create(&th[k], NULL, multiplier, tempK) != 0) {
+                if (pthread_create(&th[k], NULL, multiplier1, tempK) != 0) {
                     printf("Failed to create thread\n");
                     return;
                 }
@@ -43,7 +46,7 @@ void matrixProd() {
             }
         }
     }
-    pthread_mutex_destroy(&mutex);
+    pthread_mutex_destroy(&mutex1);
 }
 
 int main(){
@@ -110,7 +113,9 @@ int main(){
         }
     }
     
-    matrixProd();
+    start=clock();
+    matrixProd1();
+    end=clock();
 
     for(int x=0;x<m;x++){
         for(int y=0;y<p;y++){
@@ -133,5 +138,7 @@ int main(){
         free(C[x]);
     }
     free(C);
+    double time_taken = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("Time taken for part 1:%f\n",time_taken);
     
 }
