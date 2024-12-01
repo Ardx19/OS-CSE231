@@ -7,7 +7,7 @@
 #include<unistd.h>
 #include<string.h>
 #define HASH_SIZE 100003
-#define FILE_NAME "q1-10mil.txt"
+#define FILE_NAME "q1-50mil.txt"
 
 clock_t start,end;
 
@@ -89,26 +89,6 @@ void print(){
     }
 }
 
-int part2(){
-    start = clock();
-    FILE* file = fopen(FILE_NAME,"r+");
-    if(file==NULL){
-        printf("Error in opening file\n");
-        return 1;
-    }
-    double temp;
-    char station_name[100];
-    while(fscanf(file,"%99[^;];%lf\n",station_name,&temp)==2){ // 99 somehow help in the buffer not overflowing
-        update_map(station_name,temp);
-    }
-    // print();
-    fclose(file);
-    end = clock();
-    double time = (double)(end-start)/CLOCKS_PER_SEC;
-    printf("Time time taken by part2 using scanf: %f\n",time);
-    // freeSpace();
-    return 0;
-}
 
 int part1(){
     start=clock();
@@ -167,19 +147,50 @@ int part1(){
     }
     munmap(map,size);
     close(fd);
-    // print();
+    print();
     end=clock();
     double time = (double)(end-start)/CLOCKS_PER_SEC;
     printf("Time time taken by part1 using mmap: %f\n",time);
     freeSpace();
 }
 
+void resetMap() {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        map[i] = NULL;
+    }
+}
+
+int part2(){
+    start = clock();
+    FILE* file = fopen(FILE_NAME,"r+");
+    if(file==NULL){
+        printf("Error in opening file\n");
+        return 1;
+    }
+    double temp;
+    char station_name[100];
+    while(fscanf(file,"%99[^;];%lf\n",station_name,&temp)==2){ // 99 somehow help in the buffer not overflowing
+        update_map(station_name,temp);
+    }
+    // print();
+    fclose(file);
+    end = clock();
+    double time = (double)(end-start)/CLOCKS_PER_SEC;
+    printf("Time time taken by part2 using scanf: %f\n",time);
+    freeSpace();
+    return 0;
+}
+
 int main(){
     if(part1()!=0){
         return 1;
     }
+    resetMap();
     if(part2()!=0){
         return 1;
     }
+    /*Both parts work fine on their own but when called together they cause a segmentation fault maybe due to 
+      memory overflow
+      Added resetMap() which reinitializes the buket array for map*/
     return 0;
 }
