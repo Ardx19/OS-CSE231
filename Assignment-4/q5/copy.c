@@ -8,11 +8,11 @@
 char *FILE_NAME;
 char *DESTINATION;
 
-void cp() {
+int cp() {
     int source = open(FILE_NAME, O_RDONLY);
     if (source < 0) {
         perror("Error opening source file");
-        return;
+        return 1;
     }
 
     char *file = strrchr(FILE_NAME, '/');
@@ -26,7 +26,7 @@ void cp() {
     if (!destination_path) {
         perror("Memory allocation failed");
         close(source);
-        return;
+        return 1;
     }
     strcpy(destination_path, DESTINATION);
     if (destination_path[strlen(destination_path) - 1] != '/') {
@@ -41,7 +41,7 @@ void cp() {
         if (response != 'y' && response != 'Y') {
             close(source);
             free(destination_path);
-            return;
+            return 1;
         }
     }
 
@@ -51,7 +51,7 @@ void cp() {
         perror("Error opening destination file");
         close(source);
         free(destination_path);
-        return;
+        return 1;
     }
     
     //all the copy pasting
@@ -63,7 +63,7 @@ void cp() {
             close(source);
             close(dest);
             free(destination_path);
-            return;
+            return 1;
         }
     }
     if (bytes_read < 0) {
@@ -73,6 +73,7 @@ void cp() {
     close(source);
     close(dest);
     free(destination_path);
+    return 0;
 }
 
 int main(int argc, char **argv){
@@ -81,7 +82,9 @@ int main(int argc, char **argv){
         DESTINATION=(char*)malloc((strlen(argv[2])+1)*sizeof(char));
         strcpy(FILE_NAME,argv[1]);
         strcpy(DESTINATION,argv[2]);
-        cp();
+        if(cp()==0){
+            printf("%s copied to %s\n",FILE_NAME,DESTINATION);
+        }
     }
     else{
         if(argc == 1){
