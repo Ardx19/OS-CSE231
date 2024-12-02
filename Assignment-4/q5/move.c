@@ -8,25 +8,52 @@
 char *DIR_NAME;
 char *DESTINATION;
 
-void mv(){
-    char *dest = strrchr(DIR_NAME, '/');
-    if(dest != NULL){
-        dest = dest + 1; 
-    } 
-    else{
-        dest = DIR_NAME;
-    }
-    char *destination_path = malloc(strlen(DESTINATION) + strlen(dest) + 2);
-    if (!destination_path) {
-        perror("Memory allocation failed");
+// void mv(){
+//     char *dest = strrchr(DIR_NAME, '/');
+//     if(dest != NULL){
+//         dest = dest + 1; 
+//     } 
+//     else{
+//         dest = DIR_NAME;
+//     }
+//     char *destination_path = malloc(strlen(DESTINATION) + strlen(dest) + 2);
+//     if (!destination_path) {
+//         perror("Memory allocation failed");
+//         return;
+//     }
+//     strcpy(destination_path, DESTINATION);
+//     if (destination_path[strlen(destination_path) - 1] != '/') {
+//         strcat(destination_path, "/");
+//     }
+//     strcat(destination_path, dest);
+//     rename(DIR_NAME,destination_path);
+// }
+
+void mv() {
+    DIR *dir = opendir(DIR_NAME);
+    if (!dir) {
+        perror("Error opening source directory");
         return;
     }
-    strcpy(destination_path, DESTINATION);
-    if (destination_path[strlen(destination_path) - 1] != '/') {
-        strcat(destination_path, "/");
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+        char source_path[4096];
+        char dest_path[4096];
+        snprintf(source_path, sizeof(source_path), "%s/%s", DIR_NAME, entry->d_name);
+        snprintf(dest_path, sizeof(dest_path), "%s/%s", DESTINATION, entry->d_name);
+
+        if (rename(source_path, dest_path) == -1) {
+            perror("Error moving file");
+            break;
+        }
     }
-    strcat(destination_path, dest);
-    rename(DIR_NAME,destination_path);
+
+    closedir(dir);
+    rmdir(DIR_NAME);
 }
 
 int main(int argc, char **argv){
@@ -47,5 +74,7 @@ int main(int argc, char **argv){
     strcpy(DIR_NAME,argv[1]);
     strcpy(DESTINATION,argv[2]);
     mv();
+    free(DIR_NAME);
+    free(DESTINATION);
     return 0;
 }
